@@ -3,11 +3,15 @@ import java.util.*;
 public class GraphImpl implements Graph{
 
     private final List<Vertex> vertexList;
-    private final boolean[][] adjMatrix;
+    private final int[][] adjMatrix;
+
+    private int way1;
+    private int way2;
+    private int way3;
 
     public GraphImpl(int maxVerCount) {
         this.vertexList = new ArrayList<>(maxVerCount);
-        this.adjMatrix = new boolean[maxVerCount][maxVerCount];
+        this.adjMatrix = new int[maxVerCount][maxVerCount];
     }
 
     @Override
@@ -15,23 +19,25 @@ public class GraphImpl implements Graph{
         vertexList.add(new Vertex(label));
     }
 
-    @Override
-    public boolean addEdge(String startLabel, String secondLabel, String... others) {
-        boolean result = addEdge(startLabel,secondLabel);
+ //   @Override
+ //   public boolean addEdge(String startLabel, String secondLabel, String... others) {
+ //       boolean result = addEdge(startLabel,secondLabel);
+ //
+ //        for (String other : others) {
+ //           result &= addEdge(startLabel,other);
+ //       }
+ //       return result;
+ //
+ //   }
 
-        for (String other : others) {
-            result &= addEdge(startLabel,other);
-        }
-        return result;
-    }
-    public boolean addEdge(String startLabel, String endLabel) {
+    public boolean addEdge(String startLabel, String endLabel,int mass) {
         int startIndex = indexOf(startLabel);
         int endIndex = indexOf(endLabel);
 
         if(startIndex == -1 || endIndex == -1) {
             return false;
         }
-        adjMatrix[startIndex][endIndex] = true;
+        adjMatrix[startIndex][endIndex] = mass;
         return true;
     }
 
@@ -55,7 +61,7 @@ public class GraphImpl implements Graph{
         for (int i = 0; i < getSize(); i++) {
             System.out.println(vertexList.get(i));
             for (int j = 0; j < getSize(); j++) {
-                if(adjMatrix[i][j]){
+                if(adjMatrix[i][j] > 0){
                     System.out.println(" -> " + vertexList.get(j));
                 }
             }
@@ -90,6 +96,7 @@ public class GraphImpl implements Graph{
         stack.push(vertex);
         vertex.setVisited(true);
     }
+
     private void visitVertex(Queue<Vertex> stack, Vertex vertex) {
         System.out.println(vertex.getLabel());
         stack.add(vertex);
@@ -100,7 +107,7 @@ public class GraphImpl implements Graph{
         int currentIndex = vertexList.indexOf(vertex);
 
         for (int i = 0; i < getSize(); i++){
-            if (adjMatrix[currentIndex][i] && !vertexList.get(i).isVisited()) {
+            if ((adjMatrix[currentIndex][i] > 0) && !vertexList.get(i).isVisited()) {
                 return vertexList.get(i);
             }
         }
@@ -119,6 +126,7 @@ public class GraphImpl implements Graph{
         Vertex vertex = vertexList.get(startIndex);
 
         visitVertex(stack,vertex);
+
         while (!stack.isEmpty()){
             vertex = getNear(stack.peek());
             if(vertex != null){
@@ -127,6 +135,5 @@ public class GraphImpl implements Graph{
                 stack.remove();
             }
         }
-
     }
 }

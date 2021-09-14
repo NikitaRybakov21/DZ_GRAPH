@@ -2,7 +2,7 @@ public interface Graph {
 
     void addVertex(String label);
 
-    boolean addEdge(String startLabel,String secondLabel, String... others);
+    boolean addEdge(String startLabel,String secondLabel,int mass);
 
     int getSize();
 
